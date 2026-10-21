@@ -1,0 +1,6 @@
+{
+  "name": "Autonomous Multi-Agent AI Research Assistant",
+  "description": "Controllable, evidence-grounded multi-agent research assistant producing ranked literature maps, research gaps, testable hypotheses, and verified cited reports with human-in-the-loop checkpoints.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

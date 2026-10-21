@@ -1,0 +1,58 @@
+# ==============================================================================
+# Autonomous Multi-Agent AI Research Assistant Configuration
+# ==============================================================================
+
+system:
+  app_name: "Autonomous Multi-Agent AI Research Assistant"
+  version: "1.0.0"
+  log_level: "INFO"
+  random_seed: 42
+
+llm:
+  # LM Studio default endpoint or any OpenAI-compatible server (vLLM, Ollama, etc.)
+  base_url: "http://localhost:1234/v1"
+  api_key: "lm-studio"
+  model: "llama-3.1-8b-instruct"
+  temperature: 0.2
+  max_tokens: 3000
+  timeout_seconds: 60
+
+embeddings:
+  model_name: "sentence-transformers/all-MiniLM-L6-v2"
+  device: "cpu" # "cpu" or "cuda"
+
+tools:
+  arxiv:
+    max_results_per_query: 6
+    sort_by: "relevance"
+  semantic_scholar:
+    enabled: true
+    max_results: 6
+    timeout_seconds: 15
+
+agents:
+  planner:
+    max_subqueries: 4
+    domains: ["computer_science", "ai", "machine_learning", "nlp"]
+  scout:
+    parallel_workers: 3
+    extract_key_claims: true
+    max_claims_per_paper: 3
+  critic:
+    min_relevance_score: 0.55
+    dedup_similarity_threshold: 0.88
+    max_papers_kept: 12
+  synthesizer:
+    cluster_count_target: 3
+    hypotheses_count: 4
+  verifier:
+    similarity_threshold: 0.65
+    strict_entailment: true
+  writer:
+    citation_style: "numbered"
+    include_verification_appendix: true
+
+persistence:
+  backend: "sqlite" # "sqlite" or "json"
+  storage_dir: "./data/runs"
+  sqlite_path: "./data/runs.db"
