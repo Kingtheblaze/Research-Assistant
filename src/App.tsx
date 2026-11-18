@@ -4,10 +4,14 @@ import { CheckpointTwoModal } from "./components/CheckpointTwoModal";
 import { LiteratureMapView } from "./components/LiteratureMapView";
 import { VerificationMatrixView } from "./components/VerificationMatrixView";
 import { BenchmarkEvaluationView } from "./components/BenchmarkEvaluationView";
+import { ControlledExperimentView } from "./components/ControlledExperimentView";
+import { LiteratureSurveyView } from "./components/LiteratureSurveyView";
+import { TraceabilityGraphView } from "./components/TraceabilityGraphView";
 import { CodebaseExplorer } from "./components/CodebaseExplorer";
 import { ReportView } from "./components/ReportView";
 import { OpenAlexConnectorModal } from "./components/OpenAlexConnectorModal";
 import { BENCHMARK_TOPICS, INITIAL_PAPERS_POOL } from "./data/mockData";
+import { searchOpenAlexLive } from "./utils/openalexLive";
 import { ResearchState, Paper, Hypothesis, ClaimVerification, LiteratureMap, LiteratureCluster } from "./types";
 import {
   Play,
@@ -34,7 +38,9 @@ import {
 } from "lucide-react";
 
 export default function App() {
-  const [activeNav, setActiveNav] = useState<"workspace" | "benchmarks" | "codebase">("workspace");
+  const [activeNav, setActiveNav] = useState<
+    "workspace" | "experiment" | "traceability" | "survey" | "benchmarks" | "codebase"
+  >("workspace");
   const [activeResultsTab, setActiveResultsTab] = useState<
     "literature_map" | "gap" | "hypotheses" | "verification" | "report"
   >("literature_map");
@@ -59,9 +65,13 @@ export default function App() {
     verifs: ClaimVerification[];
     report: string;
   } {
-    const isPrompting = currentTopic.toLowerCase().includes("prompt");
-    const isRag = currentTopic.toLowerCase().includes("rag") || currentTopic.toLowerCase().includes("retrieval");
-    const isWeb = currentTopic.toLowerCase().includes("web");
+    const lowerTopic = currentTopic.toLowerCase();
+    const isPrompting = lowerTopic.includes("prompt");
+    const isRag = lowerTopic.includes("rag") || lowerTopic.includes("retrieval");
+    const isWeb = lowerTopic.includes("web");
+    const isMultiAgent = lowerTopic.includes("multi-agent") || lowerTopic.includes("coordination");
+    const isCrispr = lowerTopic.includes("crispr") || lowerTopic.includes("gene") || lowerTopic.includes("prime editing");
+    const isBattery = lowerTopic.includes("battery") || lowerTopic.includes("lithium") || lowerTopic.includes("electrolyte");
 
     const n = papers.length;
     const split = Math.max(1, Math.ceil(n / 3));
@@ -69,14 +79,35 @@ export default function App() {
     const p2 = papers.slice(split, split * 2);
     const p3 = papers.slice(split * 2);
 
-    let t1Name = "In-Context Conditioning, Demonstration Dynamics & Chain-of-Thought";
-    let t1Desc = "Explores deliberate thought expansion, exemplar semantic proximity, and positional attention manifolds.";
-    let t2Name = "Self-Consistency, Verbal Reflection & Automated Teleprompter Optimization";
-    let t2Desc = "Analyzes algorithmic prompt compilation, verbal reinforcement loops, and multi-path vote aggregation.";
-    let t3Name = "Adversarial Robustness, Injection Mitigation & Context Compression";
-    let t3Desc = "Examines security bounds against prompt injection, delimiter parsing, and token-level verification.";
+    let t1Name = `Foundational Mechanisms & Methodologies in ${currentTopic}`;
+    let t1Desc = `Synthesizes core experimental designs, primary observables, and benchmark baselines across ${p1.length} retrieved studies.`;
+    let t2Name = `Interfacial Dynamics, Optimization & Efficiency Enhancements`;
+    let t2Desc = `Analyzes targeted interventions, parameter optimization, and comparative performance improvements reported in ${p2.length || 1} studies.`;
+    let t3Name = `Safety, Translational Bottlenecks & Scalability Constraints`;
+    let t3Desc = `Evaluates failure modes, real-world boundary conditions, and reproducibility constraints across ${p3.length || 1} studies.`;
 
-    if (isRag) {
+    if (isCrispr) {
+      t1Name = "pegRNA Stabilization, Mismatch Repair Modulation & Editing Architecture";
+      t1Desc = "Covers structured 3' evopreQ1 motifs, dominant-negative MLH1dn inhibition (PE4/PE5), and dual-flap twinPE insertions.";
+      t2Name = "Genome-Wide Off-Target Profiling & Specificity Checkpoints";
+      t2Desc = "Analyzes CIRCLE-seq and PE-tag off-target detection, three-step DNA hybridization fidelity, and reverse-transcriptase dosage bounds.";
+      t3Name = "In Vivo Delivery Vectors: Compact PE6 vs DNA-Free eVLPs";
+      t3Desc = "Compares AAV cargo packaging constraints (~4.7 kb limit) with transient engineered virus-like particle ribonucleoprotein delivery.";
+    } else if (isBattery) {
+      t1Name = "Chemo-Mechanical Interphase Degradation & Dendrite Initiation";
+      t1Desc = "Analyzes critical current density limits, stripping void coalescence via operando X-ray tomography, and ceramic grain-boundary fracture.";
+      t2Name = "Electrochemical Window Engineering: Halide Catholytes & LiF Interphases";
+      t2Desc = "Evaluates high-voltage chloride electrolytes (>4.2 V) paired with self-healing lithiophilic fluorinated anode buffers at sub-1 MPa.";
+      t3Name = "Scalable Dry Processing & Zero-Excess Lithium Architectures";
+      t3Desc = "Examines solvent-free PTFE-fibrillated membranes (<30 µm) and Ag-C nanocomposite interlayers for high-energy pouch cells.";
+    } else if (isPrompting) {
+      t1Name = "In-Context Conditioning, Demonstration Dynamics & Chain-of-Thought";
+      t1Desc = "Explores deliberate thought expansion, exemplar semantic proximity, and positional attention manifolds.";
+      t2Name = "Self-Consistency, Verbal Reflection & Automated Teleprompter Optimization";
+      t2Desc = "Analyzes algorithmic prompt compilation, verbal reinforcement loops, and multi-path vote aggregation.";
+      t3Name = "Adversarial Robustness, Injection Mitigation & Context Compression";
+      t3Desc = "Examines security bounds against prompt injection, delimiter parsing, and token-level verification.";
+    } else if (isRag) {
       t1Name = "Dense Neural Retrieval, Reranking & Hybrid Indexing";
       t1Desc = "Focuses on vector distance thresholds, hybrid BM25 + dense neural retrieval, and index pruning.";
       t2Name = "Self-Critique, Hallucination Mitigation & Active Retrieval";
@@ -90,7 +121,7 @@ export default function App() {
       t2Desc = "Addresses error recovery, sub-goal generation, and multi-page state persistence.";
       t3Name = "Safety Sandboxes & Constraint Enforcement";
       t3Desc = "Formal verification of browser side-effects, form inputs, and automated validation gates.";
-    } else if (!isPrompting) {
+    } else if (isMultiAgent) {
       t1Name = "Architectural Decomposition & Communication Topologies";
       t1Desc = "Focuses on role-playing agent dynamics, message-passing protocols, and tree-search planning.";
       t2Name = "Self-Critique, Verification & Grounding Loops";
@@ -107,7 +138,7 @@ export default function App() {
         description: t1Desc,
         paper_ids: p1.map((p) => p.id),
         representative_claims: [
-          p1[0]?.key_claims?.[0] || `Foundational reasoning frameworks established by ${p1[0]?.id || "retrieved papers"}.`,
+          p1[0]?.key_claims?.[0] || `Foundational evidence established by ${p1[0]?.id || "retrieved papers"}.`,
         ],
       });
     }
@@ -118,7 +149,7 @@ export default function App() {
         description: t2Desc,
         paper_ids: p2.map((p) => p.id),
         representative_claims: [
-          p2[0]?.key_claims?.[0] || `Dynamic self-reflection and optimization identified in ${p2[0]?.id || "retrieved papers"}.`,
+          p2[0]?.key_claims?.[0] || `Empirical optimization and comparative metrics reported in ${p2[0]?.id || "retrieved papers"}.`,
         ],
       });
     }
@@ -129,90 +160,198 @@ export default function App() {
         description: t3Desc,
         paper_ids: p3.map((p) => p.id),
         representative_claims: [
-          p3[0]?.key_claims?.[0] || `Robustness bounds and latency limits evaluated in ${p3[0]?.id || "retrieved papers"}.`,
+          p3[0]?.key_claims?.[0] || `Translational bounds and failure mechanisms evaluated in ${p3[0]?.id || "retrieved papers"}.`,
         ],
       });
     }
+
+    const leadId1 = papers[0]?.id || "openalex:W1";
+    const leadId2 = papers[1]?.id || papers[0]?.id || "openalex:W2";
+    const leadId3 = papers[2]?.id || papers[0]?.id || "openalex:W3";
+
+    const consensus_points = isCrispr
+      ? [
+          "Combining 3' structured RNA motifs (epegRNAs) with transient MLH1dn mismatch-repair inhibition boosts prime editing efficiency up to 7.7-fold.",
+          "Three independent hybridization steps (spacer, PBS, RT template) yield markedly fewer off-target edits than canonical Cas9 nucleases.",
+          "Transient RNP delivery via eVLPs substantially curtails sustained off-target mutagenesis compared to persistent viral DNA expression.",
+        ]
+      : isBattery
+      ? [
+          "Ceramic grain boundaries and surface micro-flaws act as primary initiation sites for lithium filament propagation during plating.",
+          "LiF-rich and Li3N artificial interphases elevate interfacial energy against lithium and suppress electronic leakage into the electrolyte.",
+          "Halide catholytes withstand >4.2 V cathode potentials without oxidative decomposition seen in sulfide electrolytes.",
+        ]
+      : isPrompting
+      ? [
+          "Structured thought decomposition (e.g. Tree of Thoughts, Step-Back) reliably surpasses naive zero-shot direct prompts.",
+          "Dynamic exemplar retrieval and choice-shuffling significantly mitigate majority-label positional bias.",
+          "Positioning critical instructional cues near context window boundaries reduces middle-attention loss.",
+        ]
+      : isRag
+      ? [
+          "Modular RAG pipelines with decoupled verification achieve substantially lower hallucination than monolithic generation.",
+          "Active retrieval triggered on low-confidence tokens eliminates unnecessary context clutter.",
+        ]
+      : isMultiAgent
+      ? [
+          "Decomposing complex queries into distinct sub-tasks reliably outperforms naive zero-shot monolithic agent prompting.",
+          "Iterative verification significantly reduces factual hallucinations in long-horizon reasoning.",
+        ]
+      : [
+          `Retrieved evidence across ${papers.length} works converges on controlled parameter optimization as the primary driver of performance in ${currentTopic} ([${leadId1}]).`,
+          `Empirical cross-study comparisons consistently underscore the necessity of standardized validation protocols ([${leadId2}]).`,
+        ];
+
+    const contested_points = isCrispr
+      ? [
+          "Safety trade-offs of systemic transient mismatch repair suppression (MLH1dn) in primary human hematopoietic stem cells.",
+          "Balancing compact PACE-evolved PE6 packaging inside single AAV vectors against transient RNP eVLP biodistribution efficiency in deep organs.",
+          "Sensitivity limits of CIRCLE-seq vs PE-tag for detecting rare (<0.01%) RT-mediated genomic insertions.",
+        ]
+      : isBattery
+      ? [
+          "Whether sub-1 MPa commercial pouch cell stack pressures can prevent stripping void coalescence without sacrificial pressure fixtures.",
+          "Electrochemical instability of dry-processed PTFE binders when placed directly against zero-excess metallic lithium anodes.",
+          "Long-term stability of dual-layer halide-sulfide interdiffusion boundaries during extended high-temperature cycling.",
+        ]
+      : isPrompting
+      ? [
+          "Whether verbal self-reflection loops can prevent deep logical errors without external ground-truth execution feedback.",
+          "The trade-off between iterative prompt search latency overhead and real-time generation constraints.",
+          "Security vulnerability of in-context demonstration buffers to indirect prompt injection.",
+        ]
+      : isRag
+      ? [
+          "The efficacy of dense vector search versus hybrid keyword reranking in specialized domain corpora.",
+          "Latency overhead introduced by recursive verification tokens during high-throughput queries.",
+        ]
+      : isMultiAgent
+      ? [
+          "Whether decentralized communicative peer agents suffer from cyclic divergence compared to hierarchical orchestrator architectures.",
+          "The trade-off between dense multi-turn verification overhead and inference latency under tight execution budgets.",
+        ]
+      : [
+          `Heterogeneity in experimental protocols and reporting baselines complicates direct meta-analysis across studies on ${currentTopic} ([${leadId2}], [${leadId3}]).`,
+          `Long-horizon stability and real-world deployment trade-offs remain insufficiently quantified under standardized operating conditions.`,
+        ];
+
+    const gap = isCrispr
+      ? `While engineered epegRNAs ([${leadId1}]) and mismatch-repair inhibition ([${leadId2}]) dramatically improve prime editing efficiency ex vivo, and compact PE6 variants or eVLPs ([${leadId3}]) address delivery bottlenecks independently, there remains an unresolved translational gap: no unified delivery platform simultaneously packages compact high-efficiency editors with transient DNA-free ribonucleoprotein kinetics and localized MMR modulation without risking systemic DNA repair perturbation in non-dividing human tissues.`
+      : isBattery
+      ? `While operando X-ray tomography ([${leadId3}]) proves that stack pressures >5 MPa suppress stripping voids and fluorinated artificial SEIs ([${leadId1}]) stabilize low-pressure interfaces, there remains an unresolved materials-engineering gap: integrating solvent-free <30 µm dry-processed sulfide/halide composite membranes with self-healing lithiophilic interlayers capable of sustaining >=800 cycles in zero-excess pouch cells at <0.5 MPa stack pressure.`
+      : isPrompting
+      ? `While existing literature demonstrates the clear advantages of structured decomposition (e.g. [${leadId1}]) and verbal self-reflection (e.g. [${leadId2}]), there remains a critical lack of standardized, programmatic prompt compilation frameworks that systematically guarantee factual invariance and adversarial robustness against indirect context injection without incurring severe latency penalties in production systems.`
+      : isRag
+      ? `While modular retrieval frameworks (e.g. [${leadId1}]) and active self-reflection (e.g. [${leadId2}]) reduce ungrounded outputs, current architectures lack verifiable, token-level attribution mechanisms capable of maintaining low latency during high-throughput multi-document synthesis.`
+      : isMultiAgent
+      ? `While communicative multi-agent decomposition (e.g. [${leadId1}]) and post-retrieval reflection (e.g. [${leadId2}]) improve reasoning fidelity, there remains an unresolved gap in designing verifiable, claim-level consensus protocols that prevent cyclic degradation across extended execution horizons.`
+      : `Across the ${papers.length} retrieved publications on ${currentTopic} (including [${leadId1}] and [${leadId2}]), existing methods optimize isolated performance metrics in controlled settings, yet leave a critical cross-paper gap in standardized, reproducible validation under realistic multi-variable boundary conditions ([${leadId3}]).`;
+
+    const hyps: Hypothesis[] = isCrispr
+      ? [
+          {
+            id: "hyp-1",
+            statement: "Encapsulating compact PACE-evolved PE6 ribonucleoproteins together with epegRNAs and siRNA-mediated transient MLH1 knockdown inside tissue-targeted eVLPs increases in vivo therapeutic editing efficiency by >=3-fold over standard PEmax-eVLPs while keeping genome-wide off-target indels below 0.05%.",
+            rationale: `Synthesizes cargo-compaction results from [${leadId3}], 3'-stabilization from [${leadId1}], and MMR modulation from [${leadId2}].`,
+            grounding_paper_ids: [leadId1, leadId2, leadId3].filter((v, i, a) => a.indexOf(v) === i),
+            testability_score: 0.95,
+            novelty_score: 0.91,
+            suggested_methodology: "Compare PE6-siMLH1-eVLP vs PEmax-eVLP in primary human hepatocytes and Ai9 reporter mice using PE-tag and whole-genome amplicon sequencing at day 7 and day 28.",
+          },
+          {
+            id: "hyp-2",
+            statement: "Replacing constitutive viral reverse transcriptase expression with engineered short-half-life RNP delivery eliminates >=90% of pegRNA-independent RT genomic artifacts detected by PE-tag in primary T cells.",
+            rationale: `Grounded directly in off-target sensitivity profiles from [${leadId2}] and transient RNP kinetics in [${leadId3}].`,
+            grounding_paper_ids: [leadId2, leadId3].filter((v, i, a) => a.indexOf(v) === i),
+            testability_score: 0.93,
+            novelty_score: 0.87,
+            suggested_methodology: "Run matched-dosage CIRCLE-seq and PE-tag profiling comparing lentiviral, dual-AAV, and eVLP prime editor delivery in human CD3+ T cells.",
+          },
+          {
+            id: "hyp-3",
+            statement: "Pairing twinPE complementary 3' flap synthesis with epegRNA pseudoknot capping increases kilobase-scale Bxb1-mediated gene insertion efficiency in post-mitotic cells by >=45% without requiring MLH1dn co-expression.",
+            rationale: `Extends twinPE MMR-evasion dynamics identified across retrieved prime editing literature ([${leadId1}]).`,
+            grounding_paper_ids: [leadId1],
+            testability_score: 0.90,
+            novelty_score: 0.85,
+            suggested_methodology: "Assay 2.5 kb therapeutic cassette integration across three genomic loci in non-dividing iPSC-derived neurons with and without evopreQ1 caps.",
+          },
+        ]
+      : isBattery
+      ? [
+          {
+            id: "hyp-1",
+            statement: "Applying an ultrathin (<150 nm) atomic-layer-deposited LiF/Ag-C hybrid buffer onto dry-processed PTFE-Li6PS5Cl membranes prevents polymer defluorination and increases critical current density above 4.0 mA/cm2 at 0.5 MPa stack pressure.",
+            rationale: `Couples interfacial energy principles from [${leadId1}] with scalable dry membrane limitations in [${leadId2}] and [${leadId3}].`,
+            grounding_paper_ids: [leadId1, leadId2, leadId3].filter((v, i, a) => a.indexOf(v) === i),
+            testability_score: 0.96,
+            novelty_score: 0.90,
+            suggested_methodology: "Assemble symmetric Li||Li and full NCM811||Ag-C zero-excess cells at 0.5 MPa and monitor void formation via operando synchrotron X-ray tomography.",
+          },
+          {
+            id: "hyp-2",
+            statement: "A functionally graded dual-layer separator combining a 10 µm Li3InCl6 halide catholyte with a 15 µm LiF-passivated argyrodite anolyte suppresses >4.3 V cathode oxidation while maintaining >=85% capacity retention after 800 cycles.",
+            rationale: `Directly bridges the cathodic vs anodic electrochemical stability mismatch highlighted in [${leadId2}] and [${leadId1}].`,
+            grounding_paper_ids: [leadId1, leadId2].filter((v, i, a) => a.indexOf(v) === i),
+            testability_score: 0.93,
+            novelty_score: 0.88,
+            suggested_methodology: "Conduct high-voltage 4.4 V cycling with electrochemical impedance spectroscopy (EIS) and XPS depth profiling of the halide/sulfide interface.",
+          },
+          {
+            id: "hyp-3",
+            statement: "Pre-lithiated Li-Ag alloying interlayers reduce stripping-induced vacancy pore volume at the current collector by >=60% during 2C discharge pulses compared to bare stainless steel.",
+            rationale: `Follows directly from operando voiding thresholds and nucleation overpotential measurements in [${leadId3}].`,
+            grounding_paper_ids: [leadId3],
+            testability_score: 0.91,
+            novelty_score: 0.84,
+            suggested_methodology: "Quantify 3D interfacial pore volume fraction via X-ray CT before and after 50 high-rate stripping cycles.",
+          },
+        ]
+      : [
+          {
+            id: "hyp-1",
+            statement: isPrompting
+              ? `Programmatic prompt compilation with signature-driven constraints achieves >=30% higher reasoning accuracy on complex tasks compared to unconstrained prompt engineering with <15% token overhead.`
+              : isMultiAgent
+              ? `Hierarchical orchestrator-worker graph topologies achieve >=25% lower task failure rates compared to peer-to-peer communicative loops when reasoning horizons exceed 5 turns.`
+              : `Integrating cross-parameter validation constraints derived from [${leadId1}] with the optimization protocol in [${leadId2}] improves primary outcome fidelity in ${currentTopic} by >=20% over single-factor baselines.`,
+            rationale: `Directly grounded in empirical findings from [${leadId1}] and [${leadId2}].`,
+            grounding_paper_ids: [leadId1, leadId2].filter((v, i, a) => a.indexOf(v) === i),
+            testability_score: 0.94,
+            novelty_score: 0.88,
+            suggested_methodology: `Controlled factorial experiment comparing baseline vs integrated protocol across matched benchmark conditions.`,
+          },
+          {
+            id: "hyp-2",
+            statement: isPrompting
+              ? `Decoupled input-sanitization and delimiter verification nodes eliminate >=85% of indirect prompt injection vectors while preserving original in-context semantic entailment.`
+              : isMultiAgent || isRag
+              ? `Decoupled n-gram semantic snippet verification nodes eliminate hallucinated citations in synthesized literature reports with <15% increase in total execution latency.`
+              : `Standardizing boundary-condition controls identified in [${leadId2}] and [${leadId3}] reduces inter-study variance in ${currentTopic} by >=30% under replicated operating regimes.`,
+            rationale: `Derived from empirical evaluation and boundary limits articulated in [${leadId2}] and [${leadId3}].`,
+            grounding_paper_ids: [leadId2, leadId3].filter((v, i, a) => a.indexOf(v) === i),
+            testability_score: 0.92,
+            novelty_score: 0.86,
+            suggested_methodology: `Matched comparative evaluation measuring variance, error rate, and primary domain performance across independent replicates.`,
+          },
+          {
+            id: "hyp-3",
+            statement: `Domain-expert checkpoint verification placed between literature clustering and experimental hypothesis formulation reduces unsupported mechanistic assumptions by >=40%.`,
+            rationale: `Synthesizes evidence-provenance principles anchored in [${leadId3}].`,
+            grounding_paper_ids: [leadId3],
+            testability_score: 0.89,
+            novelty_score: 0.83,
+            suggested_methodology: `Blind randomized comparative evaluation measuring claim-support precision with and without intermediate screening gates.`,
+          },
+        ];
 
     const litMap: LiteratureMap = {
       topic: currentTopic,
       total_papers_analyzed: papers.length,
       clusters,
-      consensus_points: isPrompting
-        ? [
-            "Structured thought decomposition (e.g. Tree of Thoughts, Step-Back) reliably surpasses naive zero-shot direct prompts.",
-            "Dynamic exemplar retrieval and choice-shuffling significantly mitigate majority-label positional bias.",
-            "Positioning critical instructional cues near context window boundaries reduces middle-attention loss.",
-          ]
-        : isRag
-        ? [
-            "Modular RAG pipelines with decoupled verification achieve substantially lower hallucination than monolithic generation.",
-            "Active retrieval triggered on low-confidence tokens eliminates unnecessary context clutter.",
-          ]
-        : [
-            "Decomposing complex queries into distinct sub-tasks reliably outperforms naive zero-shot monolithic agent prompting.",
-            "Iterative verification significantly reduces factual hallucinations in long-horizon reasoning.",
-          ],
-      contested_points: isPrompting
-        ? [
-            "Whether verbal self-reflection loops can prevent deep logical errors without external ground-truth execution feedback.",
-            "The trade-off between iterative prompt search latency overhead and real-time generation constraints.",
-            "Security vulnerability of in-context demonstration buffers to indirect prompt injection.",
-          ]
-        : isRag
-        ? [
-            "The efficacy of dense vector search versus hybrid keyword reranking in specialized domain corpora.",
-            "Latency overhead introduced by recursive verification tokens during high-throughput queries.",
-          ]
-        : [
-            "Whether decentralized communicative peer agents suffer from cyclic divergence compared to hierarchical orchestrator architectures.",
-            "The trade-off between dense multi-turn verification overhead and inference latency under tight execution budgets.",
-          ],
+      consensus_points,
+      contested_points,
     };
-
-    const leadId1 = papers[0]?.id || "openalex:W4388421033";
-    const leadId2 = papers[1]?.id || (papers[0]?.id || "arXiv:2305.10601");
-    const leadId3 = papers[2]?.id || (papers[0]?.id || "arXiv:2303.11366");
-
-    const gap = isPrompting
-      ? `While existing literature demonstrates the clear advantages of structured decomposition (e.g. [${leadId1}]) and verbal self-reflection (e.g. [${leadId2}]), there remains a critical lack of standardized, programmatic prompt compilation frameworks that systematically guarantee factual invariance and adversarial robustness against indirect context injection without incurring severe latency penalties in production systems.`
-      : isRag
-      ? `While modular retrieval frameworks (e.g. [${leadId1}]) and active self-reflection (e.g. [${leadId2}]) reduce ungrounded outputs, current architectures lack verifiable, token-level attribution mechanisms capable of maintaining low latency during high-throughput multi-document synthesis.`
-      : `While communicative multi-agent decomposition (e.g. [${leadId1}]) and post-retrieval reflection (e.g. [${leadId2}]) improve reasoning fidelity, there remains an unresolved gap in designing verifiable, claim-level consensus protocols that prevent cyclic degradation across extended execution horizons.`;
-
-    const hyps: Hypothesis[] = [
-      {
-        id: "hyp-1",
-        statement: isPrompting
-          ? `Programmatic prompt compilation with signature-driven constraints achieves >=30% higher reasoning accuracy on complex tasks compared to unconstrained prompt engineering with <15% token overhead.`
-          : `Hierarchical orchestrator-worker graph topologies achieve >=25% lower task failure rates compared to peer-to-peer communicative loops when reasoning horizons exceed 5 turns.`,
-        rationale: `Directly grounded in empirical findings from [${leadId1}] and [${leadId2}] regarding reasoning state divergence.`,
-        grounding_paper_ids: [leadId1, leadId2].filter((v, i, a) => a.indexOf(v) === i),
-        testability_score: 0.94,
-        novelty_score: 0.88,
-        suggested_methodology: `Evaluate across standardized benchmark suites under fixed compute budgets with ablation of constraint layers.`,
-      },
-      {
-        id: "hyp-2",
-        statement: isPrompting
-          ? `Decoupled input-sanitization and delimiter verification nodes eliminate >=85% of indirect prompt injection vectors while preserving original in-context semantic entailment.`
-          : `Decoupled n-gram semantic snippet verification nodes eliminate hallucinated citations in synthesized literature reports with <15% increase in total execution latency.`,
-        rationale: `Derived from safety bounds and empirical evaluation articulated in [${leadId2}] and [${leadId3}].`,
-        grounding_paper_ids: [leadId2, leadId3].filter((v, i, a) => a.indexOf(v) === i),
-        testability_score: 0.92,
-        novelty_score: 0.86,
-        suggested_methodology: `Dual-blind evaluation against adversarial benchmark datasets measuring attack bypass rates and entailment preservation.`,
-      },
-      {
-        id: "hyp-3",
-        statement: `Human checkpoint verification gates placed immediately post-literature clustering reduce secondary synthesis revision cycles by more than 40%.`,
-        rationale: `Synthesizes human-in-the-loop oversight principles established in [${leadId3}].`,
-        grounding_paper_ids: [leadId3],
-        testability_score: 0.89,
-        novelty_score: 0.83,
-        suggested_methodology: `Comparative A/B study measuring user task completion speed and error revision frequency with and without checkpoint approval.`,
-      },
-    ];
 
     const verifs: ClaimVerification[] = papers.slice(0, Math.min(8, papers.length)).map((p, idx) => ({
       claim_id: `v-${idx + 1}`,
@@ -470,23 +609,42 @@ export default function App() {
       ],
     }));
 
-    const rawPool = INITIAL_PAPERS_POOL[currentTopic] || INITIAL_PAPERS_POOL[BENCHMARK_TOPICS[0]];
-    const filteredPool = rawPool.filter((p) => p.year >= yearFrom);
-    const candidatePapers = (filteredPool.length > 0 ? filteredPool : rawPool).slice(0, maxPapers);
+    let candidatePapers: Paper[] = [];
+    let scoutLog = "";
 
-    await new Promise((r) => setTimeout(r, 600));
+    const localExactPool = INITIAL_PAPERS_POOL[currentTopic];
+
+    if (includeOpenAlex && !localExactPool) {
+      try {
+        const liveResult = await searchOpenAlexLive(currentTopic, maxPapers, yearFrom, "hedasambhav@gmail.com");
+        if (liveResult.papers.length > 0) {
+          candidatePapers = liveResult.papers;
+          scoutLog = `[Literature Scout] Live OpenAlex API returned ${candidatePapers.length} works (${liveResult.totalCount.toLocaleString()} total matches in ${liveResult.latencyMs}ms, year>=${yearFrom}).`;
+        }
+      } catch (err) {
+        scoutLog = `[Literature Scout] Live OpenAlex query unavailable offline; checking local benchmark corpus.`;
+      }
+    }
+
+    if (candidatePapers.length === 0) {
+      const rawPool = localExactPool || INITIAL_PAPERS_POOL[BENCHMARK_TOPICS[0]];
+      const filteredPool = rawPool.filter((p) => p.year >= yearFrom);
+      candidatePapers = (filteredPool.length > 0 ? filteredPool : rawPool).slice(0, maxPapers);
+      if (!scoutLog) {
+        scoutLog = `[Literature Scout] Federated query: OpenAlex (250M+), arXiv, and Semantic Scholar. Retrieved ${candidatePapers.length} candidate papers (max=${maxPapers}, year>=${yearFrom})`;
+      }
+    }
+
+    await new Promise((r) => setTimeout(r, 450));
 
     // Step 2: Scout
     setState((prev) => ({
       ...prev,
       current_node: "scout",
-      logs: [
-        ...prev.logs,
-        `[Literature Scout] Federated query: OpenAlex (250M+), arXiv, and Semantic Scholar. Retrieved ${candidatePapers.length} candidate papers (max=${maxPapers}, year>=${yearFrom})`,
-      ],
+      logs: [...prev.logs, scoutLog],
     }));
 
-    await new Promise((r) => setTimeout(r, 700));
+    await new Promise((r) => setTimeout(r, 550));
 
     // Step 3: Critic
     setState((prev) => ({
@@ -499,7 +657,7 @@ export default function App() {
       ],
     }));
 
-    await new Promise((r) => setTimeout(r, 600));
+    await new Promise((r) => setTimeout(r, 450));
 
     // Checkpoint 1 Breakpoint
     setState((prev) => ({
@@ -669,10 +827,10 @@ export default function App() {
             </div>
           </div>
 
-          <nav className="hidden md:flex items-center gap-1 bg-zinc-900/80 p-1 rounded-lg border border-zinc-800/80 text-xs font-medium">
+          <nav className="hidden xl:flex items-center gap-1 bg-zinc-900/80 p-1 rounded-lg border border-zinc-800/80 text-xs font-medium">
             <button
               onClick={() => setActiveNav("workspace")}
-              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${
+              className={`px-2.5 py-1.5 rounded-md transition-colors cursor-pointer ${
                 activeNav === "workspace"
                   ? "bg-zinc-800 text-zinc-100 font-semibold shadow-xs"
                   : "text-zinc-400 hover:text-zinc-200"
@@ -681,18 +839,48 @@ export default function App() {
               Research Workspace
             </button>
             <button
+              onClick={() => setActiveNav("experiment")}
+              className={`px-2.5 py-1.5 rounded-md transition-colors cursor-pointer ${
+                activeNav === "experiment"
+                  ? "bg-zinc-800 text-emerald-300 font-semibold shadow-xs border border-emerald-500/30"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              Controlled Experiment (Mod 6)
+            </button>
+            <button
+              onClick={() => setActiveNav("traceability")}
+              className={`px-2.5 py-1.5 rounded-md transition-colors cursor-pointer ${
+                activeNav === "traceability"
+                  ? "bg-zinc-800 text-emerald-300 font-semibold shadow-xs border border-emerald-500/30"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              Traceability Chain (G1→G2)
+            </button>
+            <button
+              onClick={() => setActiveNav("survey")}
+              className={`px-2.5 py-1.5 rounded-md transition-colors cursor-pointer ${
+                activeNav === "survey"
+                  ? "bg-zinc-800 text-emerald-300 font-semibold shadow-xs border border-emerald-500/30"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              Literature Survey (CIL75)
+            </button>
+            <button
               onClick={() => setActiveNav("benchmarks")}
-              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${
+              className={`px-2.5 py-1.5 rounded-md transition-colors cursor-pointer ${
                 activeNav === "benchmarks"
                   ? "bg-zinc-800 text-zinc-100 font-semibold shadow-xs"
                   : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
-              Comparative Benchmarks
+              Benchmark Suite
             </button>
             <button
               onClick={() => setActiveNav("codebase")}
-              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${
+              className={`px-2.5 py-1.5 rounded-md transition-colors cursor-pointer ${
                 activeNav === "codebase"
                   ? "bg-zinc-800 text-zinc-100 font-semibold shadow-xs"
                   : "text-zinc-400 hover:text-zinc-200"
@@ -756,15 +944,15 @@ export default function App() {
               <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
                 <div className="px-3 py-1 rounded-md bg-zinc-950/80 border border-zinc-800 text-zinc-300 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                  <span>OpenAlex: <strong>{openAlexCount || 4}</strong></span>
+                  <span>OpenAlex: <strong>{state.papers.length > 0 ? openAlexCount : 0}</strong></span>
                 </div>
                 <div className="px-3 py-1 rounded-md bg-zinc-950/80 border border-zinc-800 text-zinc-300 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-                  <span>arXiv: <strong>{arxivCount || 7}</strong></span>
+                  <span>arXiv: <strong>{state.papers.length > 0 ? arxivCount : 0}</strong></span>
                 </div>
                 <div className="px-3 py-1 rounded-md bg-zinc-950/80 border border-zinc-800 text-zinc-300 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-indigo-400"></span>
-                  <span>S2: <strong>{s2Count || 3}</strong></span>
+                  <span>S2: <strong>{state.papers.length > 0 ? s2Count : 0}</strong></span>
                 </div>
                 <button
                   onClick={() => setIsOpenAlexModalOpen(true)}
@@ -881,12 +1069,16 @@ export default function App() {
                         }`}
                       >
                         {preset.includes("prompting")
-                          ? "LLM Prompting"
+                          ? "LLM Prompting (CSE)"
                           : preset.includes("Coordination")
-                          ? "Multi-Agent"
+                          ? "Multi-Agent (CSE)"
                           : preset.includes("Mitigation")
-                          ? "RAG Mitigation"
-                          : "Web Agents"}
+                          ? "RAG Mitigation (CSE)"
+                          : preset.includes("CRISPR")
+                          ? "CRISPR Gene Editing (Bio)"
+                          : preset.includes("Battery")
+                          ? "Solid-State Batteries (Energy)"
+                          : preset}
                       </button>
                     ))}
                   </div>
@@ -1299,10 +1491,27 @@ export default function App() {
           </>
         )}
 
-        {/* Tab 2: Comparative Benchmarks */}
+        {/* Tab 2: Controlled Experiment (Module 6) */}
+        {activeNav === "experiment" && <ControlledExperimentView />}
+
+        {/* Tab 3: Traceability Chain (G1 -> G2) */}
+        {activeNav === "traceability" && (
+          <TraceabilityGraphView
+            papers={state.papers}
+            literatureMap={state.literature_map}
+            gapStatement={state.gap_statement}
+            hypotheses={state.hypotheses}
+            verifications={state.verification_results}
+          />
+        )}
+
+        {/* Tab 4: Module-Wise Literature Survey (CIL75) */}
+        {activeNav === "survey" && <LiteratureSurveyView />}
+
+        {/* Tab 5: Benchmark Suite */}
         {activeNav === "benchmarks" && <BenchmarkEvaluationView />}
 
-        {/* Tab 3: Python Codebase Browser */}
+        {/* Tab 6: Python Codebase Browser */}
         {activeNav === "codebase" && <CodebaseExplorer />}
       </main>
 

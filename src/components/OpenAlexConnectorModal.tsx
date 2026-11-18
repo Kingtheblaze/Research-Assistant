@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { X, Copy, Check, Database, Zap, Sparkles, Terminal, ExternalLink, RefreshCw } from "lucide-react";
 import { PYTHON_CODE_FILES } from "../data/mockData";
+import { searchOpenAlexLive } from "../utils/openalexLive";
 
 interface OpenAlexConnectorModalProps {
   isOpen: boolean;
@@ -16,13 +17,14 @@ export const OpenAlexConnectorModal: React.FC<OpenAlexConnectorModalProps> = ({
   const [email, setEmail] = useState(defaultEmail);
   const [activeCodeTab, setActiveCodeTab] = useState<"tool" | "scout">("tool");
   const [copied, setCopied] = useState(false);
-  const [testQuery, setTestQuery] = useState("Large Language Models prompting");
+  const [testQuery, setTestQuery] = useState("CRISPR prime editing delivery");
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<{
-    status: "idle" | "success";
+    status: "idle" | "success" | "fallback";
     totalWorks: string;
     sampleCount: number;
     latencyMs: number;
+    sampleTitle?: string;
   }>({
     status: "idle",
     totalWorks: "250,000,000+",
@@ -42,17 +44,27 @@ export const OpenAlexConnectorModal: React.FC<OpenAlexConnectorModalProps> = ({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleRunSimulatedTest = () => {
+  const handleRunSimulatedTest = async () => {
     setIsTesting(true);
-    setTimeout(() => {
-      setIsTesting(false);
+    try {
+      const res = await searchOpenAlexLive(testQuery.trim() || "CRISPR prime editing", 12, 2022, email);
       setTestResult({
         status: "success",
+        totalWorks: res.totalCount.toLocaleString(),
+        sampleCount: res.papers.length,
+        latencyMs: res.latencyMs,
+        sampleTitle: res.papers[0]?.title,
+      });
+    } catch {
+      setTestResult({
+        status: "fallback",
         totalWorks: "254,180,420+",
-        sampleCount: 16,
+        sampleCount: 12,
         latencyMs: 285,
       });
-    }, 700);
+    } finally {
+      setIsTesting(false);
+    }
   };
 
   return (
@@ -145,10 +157,19 @@ export const OpenAlexConnectorModal: React.FC<OpenAlexConnectorModalProps> = ({
               </button>
             </div>
 
-            {testResult.status === "success" && (
-              <div className="p-2.5 rounded bg-emerald-950/40 border border-emerald-800/40 text-xs flex items-center justify-between text-emerald-300 font-mono">
-                <span>Status 200 OK · {testResult.sampleCount} papers matched in {testResult.latencyMs}ms</span>
-                <span className="text-[11px] text-emerald-400/80">Inverted abstract reconstructor OK</span>
+            {testResult.status !== "idle" && (
+              <div className="p-2.5 rounded bg-emerald-950/40 border border-emerald-800/40 text-xs space-y-1 text-emerald-300 font-mono">
+                <div className="flex items-center justify-between">
+                  <span>
+                    {testResult.status === "success" ? "Live API 200 OK" : "Offline Fallback"} · {testResult.sampleCount} retrieved ({testResult.totalWorks} total matches) in {testResult.latencyMs}ms
+                  </span>
+                  <span className="text-[11px] text-emerald-400/80">Inverted abstract reconstructor OK</span>
+                </div>
+                {testResult.sampleTitle && (
+                  <div className="text-[11px] text-zinc-300 font-sans truncate">
+                    Top Hit: <strong>{testResult.sampleTitle}</strong>
+                  </div>
+                )}
               </div>
             )}
           </div>

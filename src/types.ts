@@ -51,10 +51,37 @@ export interface ClaimVerification {
   claim_id: string;
   claim_text: string;
   cited_paper_id: string;
-  status: "supported" | "partially_supported" | "unsupported" | "hallucination";
+  status: "supported" | "partially_supported" | "unsupported" | "contradicted" | "hallucination";
   similarity_score: number;
   evidence_snippet: string;
   verdict_explanation: string;
+}
+
+export interface PriorArtItem {
+  id: string;
+  authors: string;
+  year: number;
+  approach: string;
+  dataset_evaluation: string;
+  advantages: string;
+  limitations_relevance: string;
+  category: "retrieval_rag" | "hypothesis_generation" | "multi_agent" | "novelty_evaluation";
+}
+
+export interface BlindReviewScore {
+  criterion: string;
+  system_a_score: number;
+  system_b_score: number;
+  max_score: number;
+  notes: string;
+}
+
+export interface ExpertReviewer {
+  id: string;
+  name: string;
+  role: string;
+  institution: string;
+  scores: BlindReviewScore[];
 }
 
 export interface OverrideEvent {

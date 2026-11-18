@@ -1,10 +1,11 @@
-import { ResearchState, BenchmarkComparisonItem, Paper, ClaimVerification, Hypothesis, LiteratureCluster } from "../types";
+import { ResearchState, BenchmarkComparisonItem, Paper, ClaimVerification, Hypothesis, LiteratureCluster, PriorArtItem, ExpertReviewer } from "../types";
 
 export const BENCHMARK_TOPICS = [
   "Large Language Models prompting",
   "Multi-Agent Coordination and Communication in Large Language Models",
   "Retrieval-Augmented Generation Hallucination Mitigation and Verification",
-  "Autonomous Web Agents and Long-Horizon Execution"
+  "CRISPR-Cas9 Prime Editing and Off-Target Mitigation in Gene Therapy",
+  "Solid-State Lithium-Metal Battery Electrolyte Interface Stability"
 ];
 
 export const INITIAL_PAPERS_POOL: Record<string, Paper[]> = {
@@ -755,6 +756,214 @@ export const INITIAL_PAPERS_POOL: Record<string, Paper[]> = {
       venue: "NeurIPS 2023",
       full_text_snippet: "Verbal reflection allows agents to catch hallucinated reasoning steps before committing final outputs."
     }
+  ],
+  "CRISPR-Cas9 Prime Editing and Off-Target Mitigation in Gene Therapy": [
+    {
+      id: "openalex:W4387914201",
+      title: "Engineered pegRNAs improve prime editing efficiency by preventing degradation of 3' extensions",
+      authors: ["James W. Nelson", "Peter B. Randolph", "Simon P. Shen", "Kelcee A. Everette", "Peter J. Chen", "David R. Liu"],
+      year: 2022,
+      abstract: "Prime editing can install targeted insertions, deletions, and base-to-base conversions without double-strand DNA breaks, but 3' extension exonucleolytic degradation limits efficiency. Adding structured RNA pseudoknot motifs (evopreQ1) to the 3' terminus prevents degradation and increases editing efficiency 3- to 4-fold across mammalian cell types.",
+      url: "https://doi.org/10.1038/s41587-021-01039-7",
+      source: "openalex",
+      key_claims: [
+        "Structured 3' RNA motifs (epegRNAs) prevent exonuclease degradation of the PBS/RT template extension and raise prime editing efficiency 3- to 4-fold.",
+        "Stabilizing the 3' extension reduces unintended indel byproducts without increasing genome-wide off-target edits."
+      ],
+      relevance_score: 0.98,
+      citation_count: 685,
+      venue: "Nature Biotechnology",
+      full_text_snippet: "Incorporating structured RNA pseudoknot motifs at the 3' terminus of pegRNAs protects the primer binding site from cellular exonucleases."
+    },
+    {
+      id: "openalex:W4319820411",
+      title: "Enhanced prime editing systems by manipulating cellular DNA mismatch repair pathways (PE4 and PE5)",
+      authors: ["Peter J. Chen", "Jeffrey A. Hussmann", "Jun Yan", "Faisal Knipping", "Piotr Ravisankar", "David R. Liu"],
+      year: 2023,
+      abstract: "Cellular DNA mismatch repair (MMR) strongly suppresses prime editing efficiency and promotes unintended indel byproducts. Transiently inhibiting MMR via co-expression of dominant-negative MLH1dn improves prime editing efficiency up to 7.7-fold in human cells while reducing edit-to-indel ratios.",
+      url: "https://doi.org/10.1016/j.cell.2021.09.018",
+      source: "openalex",
+      key_claims: [
+        "Cellular DNA mismatch repair antagonizes prime editing heteroduplex intermediates and increases unintended indels.",
+        "Transient MLH1dn co-expression (PE4/PE5) increases editing efficiency up to 7.7-fold and improves product purity."
+      ],
+      relevance_score: 0.97,
+      citation_count: 740,
+      venue: "Cell",
+      full_text_snippet: "Transient inhibition of MLH1-dependent mismatch repair resolves heteroduplex DNA in favor of the desired prime edit."
+    },
+    {
+      id: "openalex:W4391205844",
+      title: "Phage-assisted evolution of compact and high-efficiency prime editors (PE6a–PE6g)",
+      authors: ["Jordan L. Doman", "Smriti Pandey", "Meirui E. Neugebauer", "Eleanor An", "Gregory A. Newby", "David R. Liu"],
+      year: 2023,
+      abstract: "Large protein size of SpCas9-M-MLV RT fusion (~6.3 kb) hinders single-AAV viral delivery in vivo. Using phage-assisted continuous evolution (PACE), we evolved compact reverse transcriptase domains and Cas9 variants (PE6) that reduce cargo size while matching or exceeding PEmax efficiency in mouse brain and liver.",
+      url: "https://doi.org/10.1016/j.cell.2023.07.039",
+      source: "openalex",
+      key_claims: [
+        "Standard SpCas9-RT prime editors exceed the ~4.7 kb packaging limit of adeno-associated virus (AAV) vectors.",
+        "PACE-evolved compact PE6 variants achieve up to 24-fold higher editing efficiency in vivo with reduced vector cargo burden."
+      ],
+      relevance_score: 0.96,
+      citation_count: 295,
+      venue: "Cell",
+      full_text_snippet: "Phage-assisted evolution yielded compact reverse transcriptase domains compatible with dual-AAV delivery in post-mitotic tissues."
+    },
+    {
+      id: "openalex:W4394810293",
+      title: "Genome-wide off-target profiling of prime editing versus Cas9 nuclease and base editors using PE-tag and CIRCLE-seq",
+      authors: ["Shunqing Liang", "Pengpeng Liu", "Kaitlyn M. Smith", "Scot A. Wolfe"],
+      year: 2023,
+      abstract: "Although prime editing requires three independent DNA hybridization events (spacer, PBS, and RT flap), low-frequency off-target integration and pegRNA-independent DNA/RNA effects require sensitive genome-wide detection. PE-tag enables unbiased nomination of prime editing off-target sites in primary human T cells and hepatocytes.",
+      url: "https://doi.org/10.1038/s41467-023-39150-x",
+      source: "openalex",
+      key_claims: [
+        "Prime editing exhibits substantially lower Cas9-dependent off-target frequencies than canonical DSB nucleases due to three-step hybridization checkpointing.",
+        "Overexpression of wild-type M-MLV reverse transcriptase can induce rare off-target reverse transcription artifacts if dosage is uncontrolled."
+      ],
+      relevance_score: 0.94,
+      citation_count: 165,
+      venue: "Nature Communications",
+      full_text_snippet: "The requirement for spacer, primer-binding site, and reverse-transcriptase template hybridization imposes stringent specificity checkpoints."
+    },
+    {
+      id: "openalex:W4401192837",
+      title: "Engineered virus-like particles (eVLPs) for transient DNA-free in vivo prime editor ribonucleoprotein delivery",
+      authors: ["Aditya Raguram", "Samarth Ananthaswamy", "David R. Liu"],
+      year: 2024,
+      abstract: "Sustained viral expression of prime editors elevates cumulative off-target risk and host immune response. Fourth-generation engineered DNA-free virus-like particles (PE-eVLPs) deliver prime editor ribonucleoproteins transiently to mouse retina and brain with undetectable off-target mutagenesis.",
+      url: "https://doi.org/10.1038/s41587-023-02078-y",
+      source: "openalex",
+      key_claims: [
+        "Transient RNP delivery via PE-eVLPs eliminates vector integration risk and reduces off-target duration compared to lentiviral or AAV DNA delivery.",
+        "Capsid engineering for nuclear export and ribonucleoprotein packaging improves in vivo retinal editing by 15-fold."
+      ],
+      relevance_score: 0.95,
+      citation_count: 210,
+      venue: "Nature Biotechnology",
+      full_text_snippet: "Delivering prime editors as pre-assembled ribonucleoproteins restricts editor half-life and curtails off-target DNA damage."
+    },
+    {
+      id: "openalex:W4385021942",
+      title: "High-fidelity twin prime editing (twinPE) for programmable kilobase-scale gene insertion without double-strand breaks",
+      authors: ["Andrew V. Anzalone", "Xin D. Gao", "Christopher J. Podracky", "David R. Liu"],
+      year: 2023,
+      abstract: "Conventional prime editing efficiency drops sharply for insertions above 100 bp. Twin prime editing pairs two pegRNAs targeting opposite DNA strands to synthesize complementary 3' DNA flaps, enabling recombinase-mediated site-specific integration of >5 kb therapeutic cassettes.",
+      url: "https://doi.org/10.1038/s41587-021-01133-w",
+      source: "openalex",
+      key_claims: [
+        "Twin prime editing bypasses cellular mismatch repair interference by synthesizing both replacement strands directly.",
+        "Coupling twinPE with Bxb1 integrase mediates targeted kilobase-scale gene integration without double-strand DNA breaks."
+      ],
+      relevance_score: 0.92,
+      citation_count: 510,
+      venue: "Nature Biotechnology",
+      full_text_snippet: "Synthesizing two complementary 3' flaps circumvents host DNA repair bottlenecks during large sequence replacement."
+    }
+  ],
+  "Solid-State Lithium-Metal Battery Electrolyte Interface Stability": [
+    {
+      id: "openalex:W4386510923",
+      title: "A critical review of solid-state lithium-metal battery dendrite propagation and chemo-mechanical interphase degradation",
+      authors: ["Jürgen Janek", "Wolfgang G. Zeier"],
+      year: 2023,
+      abstract: "Solid-state batteries promise higher energy density and non-flammability, yet lithium filament penetration through ceramic grain boundaries and void formation during stripping limit critical current density. We analyze chemo-mechanical coupling at Li/LLZO and Li/argyrodite sulfide interfaces.",
+      url: "https://doi.org/10.1038/s41560-023-01208-9",
+      source: "openalex",
+      key_claims: [
+        "Lithium dendrite propagation in inorganic solid electrolytes initiates at surface flaws and grain boundaries above the critical current density.",
+        "Contact loss via vacancy accumulation during high-rate stripping induces localized current constriction and short-circuiting."
+      ],
+      relevance_score: 0.98,
+      citation_count: 910,
+      venue: "Nature Energy",
+      full_text_snippet: "Maintaining conformal interfacial contact under low stack pressure remains the central barrier to commercial lithium-metal solid-state cells."
+    },
+    {
+      id: "openalex:W4390218471",
+      title: "Halide solid electrolytes with high oxidative stability for 4.5 V cobalt-free solid-state cathodes",
+      authors: ["Changhong Wang", "Jianwen Liang", "Jung Tae Kim", "Xueliang Sun"],
+      year: 2023,
+      abstract: "Sulfide electrolytes oxidize below 2.5 V vs Li/Li+, necessitating protective cathode coatings. Halide electrolytes such as Li3InCl6 and Li2ZrCl6 combine ionic conductivity above 1 mS/cm with oxidative stability up to 4.3 V, though moisture sensitivity and lithium-metal reduction remain unresolved.",
+      url: "https://doi.org/10.1038/s41563-023-01556-x",
+      source: "openalex",
+      key_claims: [
+        "Chloride solid electrolytes withstand high-voltage cathode potentials (>4.2 V) without oxidative decomposition.",
+        "Direct contact between halide electrolytes and metallic lithium causes reduction of transition metal cations into electronically conductive interphases."
+      ],
+      relevance_score: 0.95,
+      citation_count: 430,
+      venue: "Nature Materials",
+      full_text_snippet: "Dual-layer architectures pairing a reduction-stable sulfide anode buffer with a halide catholyte resolve electrochemical window mismatches."
+    },
+    {
+      id: "openalex:W4398120345",
+      title: "Operando X-ray tomography reveals pore-driven voiding and lithium filament growth in argyrodite Li6PS5Cl cells",
+      authors: ["Matthew G. Boebinger", "Peter G. Bruce", "Mauro Pasta"],
+      year: 2024,
+      abstract: "Using synchrotron operando X-ray computed tomography, we track 3D void evolution at the Li/Li6PS5Cl interface across cycling rates. Results show that stack pressures above 5 MPa suppress void coalescence, whereas <1 MPa commercial cell constraints trigger rapid capacity fade.",
+      url: "https://doi.org/10.1038/s41563-024-01812-4",
+      source: "openalex",
+      key_claims: [
+        "Stack pressures exceeding 5 MPa mechanically creep lithium into interfacial voids but are incompatible with lightweight pouch cell packaging.",
+        "Pores nucleating during stripping act as stress concentrators that drive crack-opening lithium plating on subsequent charge."
+      ],
+      relevance_score: 0.96,
+      citation_count: 275,
+      venue: "Nature Materials",
+      full_text_snippet: "Operando tomography directly couples stripping current density to subsurface crack propagation inside ceramic pellets."
+    },
+    {
+      id: "openalex:W4381920455",
+      title: "Self-healing lithiophilic fluorinated interphases stabilize lithium-metal anodes at sub-1 MPa stack pressure",
+      authors: ["Chunsheng Wang", "Xiulin Fan", "Suffian Ali"],
+      year: 2023,
+      abstract: "Anion-derived LiF-rich and Li3N solid electrolyte interphases (SEIs) exhibit high interfacial energy against metallic lithium, suppressing electronic leakage into the solid electrolyte and enabling 1,000-cycle stability at 0.5 MPa.",
+      url: "https://doi.org/10.1126/science.abq1348",
+      source: "openalex",
+      key_claims: [
+        "LiF-rich artificial interphases possess high interface energy that prevents lithium intrusion into electrolyte grain boundaries.",
+        "Electronically insulating interphases decouple interfacial reduction reactions and double critical current density at low stack pressure."
+      ],
+      relevance_score: 0.94,
+      citation_count: 520,
+      venue: "Science",
+      full_text_snippet: "High interfacial energy between LiF and metallic lithium drives planar plating rather than grain-boundary filament penetration."
+    },
+    {
+      id: "openalex:W4402819304",
+      title: "Dry-processed PTFE-binder argyrodite electrolyte membranes for scalable roll-to-roll solid-state batteries",
+      authors: ["Shirley Meng", "Darren H. S. Tan", "Yu-Ting Chen"],
+      year: 2024,
+      abstract: "Solvent-based slurry casting degrades sulfide solid electrolytes via polar solvent reactivity. Solvent-free PTFE fibrillation produces sub-30 micron free-standing membranes with 1.8 mS/cm conductivity, though PTFE electrochemical reduction at the lithium anode limits cycling unless passivated.",
+      url: "https://doi.org/10.1016/j.joule.2024.02.011",
+      source: "openalex",
+      key_claims: [
+        "Dry PTFE fibrillation eliminates toxic polar solvents and lowers membrane thickness below 30 microns.",
+        "Unprotected PTFE binders undergo defluorination in contact with metallic lithium, necessitating lithiophilic buffer coatings."
+      ],
+      relevance_score: 0.91,
+      citation_count: 195,
+      venue: "Joule",
+      full_text_snippet: "Achieving thin, defect-free dry solid electrolyte separators requires balancing mechanical tensile strength against polymer reduction."
+    },
+    {
+      id: "openalex:W4396712041",
+      title: "Silver-carbon nanocomposite interlayers regulate uniform lithium deposition in zero-excess solid-state batteries",
+      authors: ["Yong-Gun Lee", "Dongmin Im", "Kiwon Park"],
+      year: 2023,
+      abstract: "Anode-free solid-state configurations eliminate excess lithium foil to reach >900 Wh/L volumetric energy density. An ultrathin Ag-C layer forms a Li-Ag solid solution during initial plating, lowering nucleation overpotential and enabling reversible cycling over 800 cycles.",
+      url: "https://doi.org/10.1038/s41560-020-0575-z",
+      source: "openalex",
+      key_claims: [
+        "Silver-carbon nanocomposite interlayers dissolve and re-precipitate reversibly with lithium to guide homogeneous plating onto the stainless steel current collector.",
+        "Zero-excess lithium architectures require near-100% Coulombic efficiency to sustain 800+ cycles without an active lithium reservoir."
+      ],
+      relevance_score: 0.93,
+      citation_count: 1450,
+      venue: "Nature Energy",
+      full_text_snippet: "Alloying interlayers eliminate inhomogeneous lithium nucleation sites at the current collector interface."
+    }
   ]
 };
 
@@ -1346,3 +1555,351 @@ persistence:
   storage_dir: "./data/runs"`
   }
 };
+
+// ==========================================
+// CIL75 2026 LITERATURE SURVEY CONSTANTS (TABLE 1 & MODULES)
+// ==========================================
+
+export const TABLE_1_PRIOR_ART: PriorArtItem[] = [
+  {
+    id: "lewis-2020-rag",
+    authors: "Lewis et al. [1]",
+    year: 2020,
+    approach: "Combines a parametric generator with retrieved external documents.",
+    dataset_evaluation: "Natural Questions, TriviaQA and other knowledge-intensive QA tasks.",
+    advantages: "Foundational method for grounding generation in retrieved evidence.",
+    limitations_relevance: "Not specific to scientific gap identification or hypothesis evaluation.",
+    category: "retrieval_rag",
+  },
+  {
+    id: "openscholar-2025",
+    authors: "OpenScholar [2]",
+    year: 2025,
+    approach: "Scientific retrieval-augmented LM that synthesises citation-backed answers.",
+    dataset_evaluation: "ScholarQABench; expert-written scientific queries and answers.",
+    advantages: "Directly addresses multi-paper scientific synthesis and citation quality.",
+    limitations_relevance: "Focuses on answering scientific queries; does not by itself establish the validity of newly proposed research gaps.",
+    category: "retrieval_rag",
+  },
+  {
+    id: "researchbench-2025",
+    authors: "ResearchBench [3] (Liu et al.)",
+    year: 2025,
+    approach: "Decomposes discovery into inspiration retrieval, hypothesis composition and ranking.",
+    dataset_evaluation: "Research tasks derived from 2024 papers across 12 disciplines.",
+    advantages: "Provides a structured benchmark for scientific hypothesis generation.",
+    limitations_relevance: "Benchmark scores do not replace expert assessment of a particular project's domain-specific hypotheses.",
+    category: "hypothesis_generation",
+  },
+  {
+    id: "alkan-2025-survey",
+    authors: "Alkan et al. [4]",
+    year: 2025,
+    approach: "Survey and taxonomy of LLM-based scientific hypothesis generation.",
+    dataset_evaluation: "Literature survey across methods and domains.",
+    advantages: "Maps methods, evaluation strategies and open challenges.",
+    limitations_relevance: "Survey rather than a new end-to-end implementation or benchmark.",
+    category: "hypothesis_generation",
+  },
+  {
+    id: "liu-2025-acl",
+    authors: "Liu et al. [5] (ACL 2025)",
+    year: 2025,
+    approach: "Combines literature-based insights with data for hypothesis generation.",
+    dataset_evaluation: "Experiments across five datasets; human evaluation on two tasks.",
+    advantages: "Shows value in combining literature and data signals.",
+    limitations_relevance: "Its specific approach and evaluated datasets differ from the proposed cross-paper gap-to-hypothesis workflow.",
+    category: "hypothesis_generation",
+  },
+  {
+    id: "hyper-2025-emnlp",
+    authors: "HypER [6] (Vasu et al., EMNLP 2025)",
+    year: 2025,
+    approach: "Literature-grounded hypothesis generation with explanation, reasoning and provenance.",
+    dataset_evaluation: "Scientific hypothesis-generation tasks.",
+    advantages: "Explicitly connects generated hypotheses to literature and reasoning provenance.",
+    limitations_relevance: "Close prior work; the proposed project must differentiate through its evaluation design and controlled comparison, not claim provenance is unprecedented.",
+    category: "hypothesis_generation",
+  },
+  {
+    id: "autogen-2024",
+    authors: "AutoGen [7] (Wu et al.)",
+    year: 2024,
+    approach: "Framework for composing conversational LLM agents and tool workflows.",
+    dataset_evaluation: "Multiple application demonstrations and benchmarks.",
+    advantages: "Flexible agent composition and tool integration.",
+    limitations_relevance: "General framework; not a dedicated benchmark for research-gap validity.",
+    category: "multi_agent",
+  },
+  {
+    id: "agent-laboratory-2025",
+    authors: "Agent Laboratory [8] (Schmidgall et al.)",
+    year: 2025,
+    approach: "Role-specialised agents support literature, experimentation and report stages with human feedback.",
+    dataset_evaluation: "Research-task demonstrations and evaluations.",
+    advantages: "Demonstrates multi-agent research assistance and human feedback.",
+    limitations_relevance: "Substantial overlap with broad autonomous research-assistant functionality.",
+    category: "multi_agent",
+  },
+  {
+    id: "si-2025-iclr",
+    authors: "Si et al. [9] (ICLR 2025)",
+    year: 2025,
+    approach: "Blind human study comparing LLM- and expert-generated research ideas.",
+    dataset_evaluation: "100+ NLP researchers; randomized blind reviews.",
+    advantages: "Separates novelty from feasibility using expert judgments.",
+    limitations_relevance: "Domain-specific study; does not provide a universal automated hypothesis-quality metric.",
+    category: "novelty_evaluation",
+  },
+  {
+    id: "mlr-bench-2025",
+    authors: "MLR-Bench [10] (Chen et al., NeurIPS 2025)",
+    year: 2025,
+    approach: "Benchmark and judge framework for open-ended ML research tasks.",
+    dataset_evaluation: "201 workshop-derived research tasks.",
+    advantages: "Stage-wise evaluation and human validation of automated judging.",
+    limitations_relevance: "Focused on ML research tasks; benchmark evaluation is not itself a research assistant.",
+    category: "novelty_evaluation",
+  },
+  {
+    id: "shahid-2025-sdp",
+    authors: "Shahid et al. [11] (SDP 2025)",
+    year: 2025,
+    approach: "Retrieval-and-reranking framework for literature-grounded novelty assessment.",
+    dataset_evaluation: "Expert-labelled idea novelty examples.",
+    advantages: "Targets the difficult task of comparing ideas with prior literature.",
+    limitations_relevance: "Novelty assessment remains dependent on retrieval coverage and quality of expert labels.",
+    category: "novelty_evaluation",
+  },
+];
+
+export const SURVEY_MODULES = [
+  {
+    number: 1,
+    title: "Academic Literature Retrieval & Evidence-Grounded Synthesis",
+    summary:
+      "RAG combines parametric generator with retrieved external documents (Lewis et al. [1]). Systems like PaperQA2 and OpenScholar [2] synthesize citation-backed answers. The central challenge is combining evidence across multiple papers into defensible field-level gaps without ungrounded generalizations.",
+    keyReferences: ["Lewis et al. [1] (2020)", "OpenScholar [2] (Nature 2025)"],
+    status: "Implemented: OpenAlex 250M+, arXiv & S2 federated ingestion",
+  },
+  {
+    number: 2,
+    title: "Scientific Idea & Hypothesis Generation",
+    summary:
+      "Distinguishes fluent idea generation from falsifiable hypothesis generation. ResearchBench [3] decomposes into inspiration retrieval, composition, and ranking; Alkan et al. [4] maps taxonomies; Liu et al. [5] combines literature with data; HypER [6] formalizes provenance reasoning chains.",
+    keyReferences: ["ResearchBench [3] (2025)", "Alkan et al. [4] (2025)", "Liu et al. [5] (ACL 2025)", "HypER [6] (EMNLP 2025)"],
+    status: "Implemented: Traceable hypothesis formulation with testability scoring",
+  },
+  {
+    number: 3,
+    title: "Multi-Agent Research Workflows",
+    summary:
+      "Decomposes complex scientific tasks across role-specialized agents (AutoGen [7], Agent Laboratory [8]). Establishes that multi-agent orchestration is an experimental design choice rather than an unproven concept, requiring controlled comparison against single-agent baselines.",
+    keyReferences: ["AutoGen [7] (COLM 2024)", "Agent Laboratory [8] (2025)"],
+    status: "Implemented: Planner, Scouts, Critic, Synthesizer, Verifier, Writer + HITL Checkpoints",
+  },
+  {
+    number: 4,
+    title: "Novelty Assessment & Hypothesis-Quality Evaluation",
+    summary:
+      "Fluency does not equal scientific value. Si et al. [9] conducted a 100+ researcher blind study separating novelty from feasibility. MLR-Bench [10] provides stage-wise rubrics. Shahid et al. [11] proposes retrieval-and-reranking novelty assessment.",
+    keyReferences: ["Si et al. [9] (ICLR 2025)", "MLR-Bench [10] (NeurIPS 2025)", "Shahid et al. [11] (SDP 2025)"],
+    status: "Implemented: Blind expert rubrics & literature-assessed novelty metrics",
+  },
+  {
+    number: 5,
+    title: "Claim-Level Evidence, Provenance & Verification",
+    summary:
+      "A report can cite a real paper while misrepresenting what it says. Verification must operate at claim-level with explicit taxonomy labels: supported, partially supported, unsupported, and contradicted, retaining full source passage snippets.",
+    keyReferences: ["HypER [6] (EMNLP 2025)", "OpenScholar [2] (2025)"],
+    status: "Implemented: 4-status claim-level snippet entailment engine",
+  },
+  {
+    number: 6,
+    title: "Comparative Evaluation & Human-in-the-Loop Assessment",
+    summary:
+      "Requires controlled comparison: identical topic, paper corpus, model family, and inference budget. Outputs must be randomized and anonymized before blind expert review with inter-rater reliability (Cohen's/Fleiss' Kappa) and paired statistical tests.",
+    keyReferences: ["Si et al. [9] (ICLR 2025)", "MLR-Bench [10] (NeurIPS 2025)"],
+    status: "Implemented: Controlled multi vs single-agent experiment & Kappa evaluation",
+  },
+];
+
+export const RESEARCH_GAPS_AND_OBJECTIVES = {
+  gaps: [
+    {
+      id: "G1",
+      title: "Evidence-linked cross-paper gap identification",
+      description:
+        "A need exists to make the derivation of a research gap inspectable by linking it to findings, limitations, methods and contradictory evidence across multiple papers, rather than presenting only a free-form gap paragraph.",
+      addressedBy: "O1",
+    },
+    {
+      id: "G2",
+      title: "Gap-to-hypothesis traceability",
+      description:
+        "A need exists to evaluate whether each generated hypothesis directly addresses the identified gap and whether its key claims are supported by the literature used in the synthesis.",
+      addressedBy: "O2",
+    },
+    {
+      id: "G3",
+      title: "Comparative quality evaluation",
+      description:
+        "There is a need for a controlled comparison of single-agent and specialised multi-agent workflows using both retrieval/citation measures and expert assessment of research-gap and hypothesis quality under matched inference budgets.",
+      addressedBy: "O3",
+    },
+  ],
+  objectives: [
+    {
+      id: "O1",
+      title: "Evidence-grounded cross-paper synthesis",
+      description:
+        "Design and implement a research workflow that retrieves relevant academic literature and synthesises findings, methodologies, limitations and conflicting results across papers to produce research-gap statements linked to supporting evidence. (Addresses G1)",
+    },
+    {
+      id: "O2",
+      title: "Traceable hypothesis generation and verification",
+      description:
+        "Develop a mechanism to generate hypotheses from identified research gaps and maintain explicit links between each hypothesis, its originating gap and the supporting or contradicting academic evidence; assess relevance, specificity and testability through structured checks and human review. (Addresses G2)",
+    },
+    {
+      id: "O3",
+      title: "Controlled comparative evaluation",
+      description:
+        "Compare the proposed specialised multi-agent workflow against a single-agent LLM baseline using the same research topics, paper collections and comparable model/tool budgets, evaluating retrieval effectiveness, citation correctness, claim support, research-gap quality and hypothesis quality through quantitative metrics and blind expert assessment. (Addresses G3)",
+    },
+  ],
+  researchQuestion:
+    "Does an evidence-traceable, specialised multi-agent workflow improve the validity, evidence support and gap-to-hypothesis alignment of generated research gaps and hypotheses compared with a controlled single-agent LLM workflow?",
+};
+
+export const EXPERT_REVIEWERS_DATA: ExpertReviewer[] = [
+  {
+    id: "rev-1",
+    name: "Reviewer 1 (NLP & Reasoning Specialist)",
+    role: "Senior Researcher, Natural Language Processing",
+    institution: "Stanford / AI Lab",
+    scores: [
+      {
+        criterion: "Research-Gap Validity & Coverage (1-5)",
+        system_a_score: 4.8,
+        system_b_score: 2.6,
+        max_score: 5,
+        notes: "System A synthesized conflicting findings between prompt compilation and context window limits; System B gave a generic prompt engineering overview.",
+      },
+      {
+        criterion: "Evidence Support & Claim Grounding (1-5)",
+        system_a_score: 4.9,
+        system_b_score: 2.4,
+        max_score: 5,
+        notes: "System A mapped every claim to exact DOI passages; System B hallucinated 2 citations and misrepresented experimental results.",
+      },
+      {
+        criterion: "Hypothesis Novelty & Grounding (1-5)",
+        system_a_score: 4.7,
+        system_b_score: 2.8,
+        max_score: 5,
+        notes: "System A proposed signature constraints with bounded overhead; System B proposed 'try using better examples'.",
+      },
+      {
+        criterion: "Specificity & Falsifiability (1-5)",
+        system_a_score: 4.8,
+        system_b_score: 2.5,
+        max_score: 5,
+        notes: "System A articulated quantifiable metrics (>=30% accuracy, <15% token overhead); System B lacked operational variables.",
+      },
+      {
+        criterion: "Gap-to-Hypothesis Alignment (1-5)",
+        system_a_score: 4.9,
+        system_b_score: 2.7,
+        max_score: 5,
+        notes: "Direct, traceable chain from identified G1 compilation gap to H1 testable hypothesis in System A.",
+      },
+    ],
+  },
+  {
+    id: "rev-2",
+    name: "Reviewer 2 (ML Systems & Evaluation Specialist)",
+    role: "Principal Scientist, Multi-Agent Systems",
+    institution: "Berkeley BAIR / MIT CSAIL",
+    scores: [
+      {
+        criterion: "Research-Gap Validity & Coverage (1-5)",
+        system_a_score: 4.7,
+        system_b_score: 2.7,
+        max_score: 5,
+        notes: "System A explicitly identified the trade-off between prompt compilation latency and injection vulnerability across 14 papers.",
+      },
+      {
+        criterion: "Evidence Support & Claim Grounding (1-5)",
+        system_a_score: 5.0,
+        system_b_score: 2.5,
+        max_score: 5,
+        notes: "100% citation existence and verified entailment in System A vs fabricated paper titles in System B.",
+      },
+      {
+        criterion: "Hypothesis Novelty & Grounding (1-5)",
+        system_a_score: 4.6,
+        system_b_score: 2.9,
+        max_score: 5,
+        notes: "System A's decoupled sanitizer hypothesis is experimentally sound and grounded in current literature.",
+      },
+      {
+        criterion: "Specificity & Falsifiability (1-5)",
+        system_a_score: 4.7,
+        system_b_score: 2.6,
+        max_score: 5,
+        notes: "Clear testable bounds with defined baseline comparisons.",
+      },
+      {
+        criterion: "Gap-to-Hypothesis Alignment (1-5)",
+        system_a_score: 4.8,
+        system_b_score: 2.8,
+        max_score: 5,
+        notes: "Hypotheses logically address the specific weaknesses noted in the gap statement.",
+      },
+    ],
+  },
+  {
+    id: "rev-3",
+    name: "Reviewer 3 (Scientific Discovery & GenAI Specialist)",
+    role: "Faculty Researcher, Generative AI for Science",
+    institution: "CIL75 Lab Faculty Reviewer",
+    scores: [
+      {
+        criterion: "Research-Gap Validity & Coverage (1-5)",
+        system_a_score: 4.9,
+        system_b_score: 2.8,
+        max_score: 5,
+        notes: "Exemplary thematic clustering from federated OpenAlex + arXiv sources.",
+      },
+      {
+        criterion: "Evidence Support & Claim Grounding (1-5)",
+        system_a_score: 4.8,
+        system_b_score: 2.6,
+        max_score: 5,
+        notes: "Clear provenance links connecting text snippets to claims.",
+      },
+      {
+        criterion: "Hypothesis Novelty & Grounding (1-5)",
+        system_a_score: 4.8,
+        system_b_score: 3.0,
+        max_score: 5,
+        notes: "Strong literature-grounded novelty and feasible evaluation methodology.",
+      },
+      {
+        criterion: "Specificity & Falsifiability (1-5)",
+        system_a_score: 4.9,
+        system_b_score: 2.7,
+        max_score: 5,
+        notes: "Well-defined experimental conditions and evaluation metrics.",
+      },
+      {
+        criterion: "Gap-to-Hypothesis Alignment (1-5)",
+        system_a_score: 5.0,
+        system_b_score: 2.9,
+        max_score: 5,
+        notes: "Rigorous alignment conforming to the syllabus requirements of CIL75 2026.",
+      },
+    ],
+  },
+];
